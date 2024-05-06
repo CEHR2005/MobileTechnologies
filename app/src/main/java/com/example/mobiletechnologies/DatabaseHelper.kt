@@ -84,7 +84,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "exercise.db"
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 6
         const val TABLE_EXERCISE_TYPE = "ExerciseType"
         const val TABLE_EXERCISE_RECORD = "ExerciseRecord"
         const val COL_ID = "id"

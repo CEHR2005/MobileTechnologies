@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Existing Views (Spinner, EditText, Button) -->
     <Spinner
         android:id="@+id/spinner_exercise_type"
         android:layout_width="match_parent"
@@ -13,12 +14,40 @@
         android:id="@+id/edittext_duration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter duration in minutes"
+        android:hint="@string/enter_duration_in_minutes"
         android:inputType="number" />
 
     <Button
         android:id="@+id/button_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Exercise" />
+        android:text="@string/save_exercise" />
+
+    <!-- Timer Controls -->
+    <TextView
+        android:id="@+id/textview_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/_00_00"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/button_start_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/start_timer" />
+
+    <Button
+        android:id="@+id/button_stop_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_timer" />
+
+    <Button
+        android:id="@+id/button_reset_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/reset_timer" />
 </LinearLayout>

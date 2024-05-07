@@ -39,6 +39,22 @@ class HomeFragment : Fragment() {
         dbHelper = DatabaseHelper(requireContext())
         spinnerExerciseType = view.findViewById(R.id.spinner_exercise_type)
         editTextDuration = view.findViewById(R.id.edittext_duration)
+        editTextDuration.setOnFocusChangeListener { v, hasFocus ->
+            if (!hasFocus) {
+                // Validation
+                val inputText = editTextDuration.text.toString()
+                val duration = inputText.toIntOrNull()
+
+                if (duration == null || duration <= 0) {
+                    Toast.makeText(requireContext(), "Please enter a valid duration in minutes.", Toast.LENGTH_SHORT).show()
+                    editTextDuration.setText("")
+                } else {
+                    // Format the input (removes leading zeros)
+                    editTextDuration.setText(duration.toString())
+                }
+            }
+        }
+
         buttonSave = view.findViewById(R.id.button_save)
         textViewTimer = view.findViewById(R.id.textview_timer)
         buttonStartTimer = view.findViewById(R.id.button_start_timer)

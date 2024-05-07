@@ -7,8 +7,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mobiletechnologies.R
 
-class ExerciseAdapter(private val exercises: List<Exercise>) :
-    RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
+class ExerciseAdapter(
+    private var exercises: List<Exercise>,
+    private val onExerciseLongClick: (Exercise) -> Unit // Long click callback
+) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExerciseViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -20,10 +22,20 @@ class ExerciseAdapter(private val exercises: List<Exercise>) :
         val exercise = exercises[position]
         holder.nameTextView.text = exercise.name
         holder.durationTextView.text = "${exercise.duration} mins"
+
+        // Add long click listener to handle item deletion
+        holder.itemView.setOnLongClickListener {
+            onExerciseLongClick(exercise)
+            true
+        }
     }
 
-    override fun getItemCount(): Int {
-        return exercises.size
+    override fun getItemCount(): Int = exercises.size
+
+    // Method to update data when the dataset changes
+    fun updateData(newExercises: List<Exercise>) {
+        exercises = newExercises
+        notifyDataSetChanged()
     }
 
     class ExerciseViewHolder(view: View) : RecyclerView.ViewHolder(view) {

@@ -1,6 +1,5 @@
 package com.example.mobiletechnologies
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -32,9 +31,6 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        val serviceIntent = Intent(this, TimerService::class.java)
-        startService(serviceIntent)
 
     }
 }

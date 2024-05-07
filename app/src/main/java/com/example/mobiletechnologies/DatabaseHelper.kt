@@ -35,7 +35,11 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         """.trimIndent()
         db?.execSQL(createExerciseRecordTable)
     }
-
+    fun deleteExerciseById(id: Int): Boolean {
+        val db = writableDatabase
+        val deletedRows = db.delete(TABLE_EXERCISE_RECORD, "$COL_ID=?", arrayOf(id.toString()))
+        return deletedRows > 0
+    }
     private fun insertInitialExerciseTypes(db: SQLiteDatabase?) {
         Log.i("DatabaseHelper", "Inserting initial exercise types...")
         val exerciseTypes = listOf("Running", "Swimming", "Cycling")
@@ -71,9 +75,10 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         val cursor = db.rawQuery(query, null)
         if (cursor.moveToFirst()) {
             do {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow(COL_ID))
                 val name = cursor.getString(cursor.getColumnIndexOrThrow(COL_TYPE_NAME))
                 val duration = cursor.getInt(cursor.getColumnIndexOrThrow(COL_DURATION))
-                exercises.add(Exercise(name, duration))
+                exercises.add(Exercise(name, duration, id))
             } while (cursor.moveToNext())
         } else {
             Log.e("DatabaseHelper", "No exercise records found")

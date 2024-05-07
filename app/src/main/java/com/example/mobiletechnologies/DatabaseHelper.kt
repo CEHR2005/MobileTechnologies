@@ -21,9 +21,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         """.trimIndent()
         db?.execSQL(createExerciseTypeTable)
 
-        // Insert initial data
-        insertInitialExerciseTypes(db)
-
         // Create exercise record table
         val createExerciseRecordTable = """
             CREATE TABLE $TABLE_EXERCISE_RECORD (
@@ -34,12 +31,12 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             )
         """.trimIndent()
         db?.execSQL(createExerciseRecordTable)
+
+        // Insert initial data into both tables
+        insertInitialExerciseTypes(db)
+        insertInitialExerciseRecords(db)
     }
-    fun deleteExerciseById(id: Int): Boolean {
-        val db = writableDatabase
-        val deletedRows = db.delete(TABLE_EXERCISE_RECORD, "$COL_ID=?", arrayOf(id.toString()))
-        return deletedRows > 0
-    }
+
     private fun insertInitialExerciseTypes(db: SQLiteDatabase?) {
         Log.i("DatabaseHelper", "Inserting initial exercise types...")
         val exerciseTypes = listOf("Running", "Swimming", "Cycling")
@@ -56,6 +53,27 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
     }
 
+    private fun insertInitialExerciseRecords(db: SQLiteDatabase?) {
+        Log.i("DatabaseHelper", "Inserting initial exercise records...")
+        // Assuming exercise types already exist
+        val exerciseTypes = listOf("Running", "Swimming", "Cycling")
+        for (i in 1..10) {
+            val exerciseTypeIndex = (i - 1) % exerciseTypes.size
+            val type = exerciseTypes[exerciseTypeIndex]
+            val duration = (10 + i) * 10 // Varying duration for demonstration
+
+            // Insert record into the exercise record table
+            val query = """
+                INSERT INTO $TABLE_EXERCISE_RECORD (${COL_TYPE_ID}, $COL_DURATION)
+                VALUES ((SELECT $COL_ID FROM $TABLE_EXERCISE_TYPE WHERE $COL_TYPE_NAME = ?), ?)
+            """.trimIndent()
+            val statement = db?.compileStatement(query)
+            statement?.bindString(1, type)
+            statement?.bindLong(2, duration.toLong())
+            statement?.executeInsert()
+        }
+    }
+
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         Log.i("DatabaseHelper", "Upgrading database from $oldVersion to $newVersion...")
         db?.execSQL("DROP TABLE IF EXISTS $TABLE_EXERCISE_RECORD")
@@ -63,6 +81,11 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         onCreate(db)
     }
 
+    fun deleteExerciseById(id: Int): Boolean {
+        val db = writableDatabase
+        val deletedRows = db.delete(TABLE_EXERCISE_RECORD, "$COL_ID=?", arrayOf(id.toString()))
+        return deletedRows > 0
+    }
 
     fun getExercises(): List<Exercise> {
         val exercises = mutableListOf<Exercise>()
@@ -89,7 +112,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "exercise.db"
-        private const val DATABASE_VERSION = 8
+        private const val DATABASE_VERSION = 9
         const val TABLE_EXERCISE_TYPE = "ExerciseType"
         const val TABLE_EXERCISE_RECORD = "ExerciseRecord"
         const val COL_ID = "id"
